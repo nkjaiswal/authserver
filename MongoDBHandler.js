@@ -16,7 +16,8 @@ module.exports = function() {
 				var collection = db.collection(table);
 				collection.insert(data,function(err,result){
 					db.close();
-					callback(err,result);
+					if(callback)
+						callback(err,result);
 				});
 			}
 		});
@@ -31,7 +32,8 @@ module.exports = function() {
 				db.collection(table, function(error, collection) {
         			collection.find(condition).toArray(function(err,result){
         				db.close();
-        				callback(err,result)
+        				if(callback)
+        					callback(err,result)
         			});
   				});
 			}
@@ -48,7 +50,8 @@ module.exports = function() {
 				db.collection(table, function(error, collection) {
         			collection.update(condition,{ $set : jsonData },function(err,result){
         				db.close();
-        				callback(err,result)
+        				if(callback)
+        					callback(err,result)
         			});
   				});
 			}
@@ -64,7 +67,8 @@ module.exports = function() {
 				db.collection(table, function(error, collection) {
         			collection.remove(condition,function(err,result){
         				db.close();
-        				callback(err,result)
+        				if(callback)
+        					callback(err,result)
         			});
   				});
 			}

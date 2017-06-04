@@ -1,11 +1,18 @@
 var express    = require('express')
 var bodyParser = require('body-parser')
+var uuid = require('uuid');
+var url = require('url');
 var app = express()
 app.use(bodyParser.urlencoded({extended:false}))
 app.use(bodyParser.json());
 var StringDecoder = require('string_decoder').StringDecoder;
 var decoder = new StringDecoder('utf8');
-
+var cookieSession = require('cookie-session')
+app.set('trust proxy', 1)
+app.use(cookieSession({
+  name: 'session',
+  keys: ['key1', 'key2']
+}))
 
 var mongo = require("./MongoDBHandler.js");
 var mongoDBHandler = new mongo();
@@ -70,7 +77,40 @@ app.get('/oauth/getPublicKey',function(req,res){
     sendPublicKey(res);
 });
 
-app.get('/oauth/getToken',function(req,res){
+// app.get('/oauth/getToken',function(req,res){
+//     auth = req.headers.authorization;
+//     var token = auth.split(" ");
+//     if(token[0]!="Basic"){
+//     	sendUnAuth(res);
+//     	return;
+//     }
+//     var plain = new Buffer.from(token[1],'base64').toString();
+//     var user = plain.split(":")[0];
+//     var pwd = plain.split(":")[1];
+//     var pwdSalt = sha1(pwd);
+//     console.log("Login Request from user:" + user);
+//     mongoDBHandler.read("authorization",{
+// 	    	userid:user,
+// 	    	pwd:pwdSalt
+// 	    },function(err,result){
+// 	    	if(err){sendUnAuth(res);return;}
+// 	    	if(result.length<=0){sendUnAuth(res);return;}
+// 	    	var token = {};
+// 	    	token.auth = {};
+// 	    	token.auth.app = result[0].apps;
+// 	    	token.auth.user = result[0].userid;
+// 	    	token.sign = privateKey.sign(token.auth).toString('base64');
+// 	    	sendHTTPResponse({
+// 	    		httpCode : 200,
+// 	    		contentType : 'application/json',
+// 	    		content : token,
+// 	    		oResponse : res
+// 	    	});
+// 	    }
+//     );
+// });
+
+app.get('/oauth/authenticate',function(req,res){
     auth = req.headers.authorization;
     var token = auth.split(" ");
     if(token[0]!="Basic"){
@@ -89,16 +129,53 @@ app.get('/oauth/getToken',function(req,res){
 	    	if(err){sendUnAuth(res);return;}
 	    	if(result.length<=0){sendUnAuth(res);return;}
 	    	var token = {};
-	    	token.auth = {};
-	    	token.auth.app = result[0].apps;
-	    	token.auth.user = result[0].userid;
-	    	token.sign = privateKey.sign(token.auth).toString('base64');
-	    	sendHTTPResponse({
-	    		httpCode : 200,
-	    		contentType : 'application/json',
-	    		content : token,
-	    		oResponse : res
-	    	});
+	    	token.token = uuid.v4() + "." + uuid.v1() + "." + uuid.v4();
+	    	mongoDBHandler.insert("tempAuthToken",{
+	    			userid : user,
+	    			token : token.token
+	    		},
+	    		function(err,result){
+	    			if(err){sendUnAuth(res);return;}
+			    	sendHTTPResponse({
+			    		httpCode : 200,
+			    		contentType : 'application/json',
+			    		content : token,
+			    		oResponse : res
+			    	});
+	    		}
+	    	)
+	    }
+    );
+});
+
+app.get('/callback',function(req,res){
+	//get the token and redirectUri from the query string
+	//if valid token, send the user data to redirectUri
+	var url_parts = url.parse(req.url, true);
+	var redirectUri = url_parts.query.redirectUri;
+	var token = url_parts.query.token;
+    mongoDBHandler.read("tempAuthToken",{
+	    	token:token
+	    },function(err,result){
+	    	if(err){sendUnAuth(res);return;}
+	    	if(result.length<=0){sendUnAuth(res);return;}
+	    	var userid = result[0].userid;
+	    	mongoDBHandler.delete("tempAuthToken",{token:token},null);
+	    	mongoDBHandler.read("authorization",{
+		    	userid:userid
+		    },function(err,result){
+		    	if(err){sendUnAuth(res);return;}
+		    	if(result.length<=0){sendUnAuth(res);return;}
+		    	var token_send = {};
+		    	token_send.auth = {};
+		    	token_send.auth.app = result[0].apps;
+		    	token_send.auth.user = result[0].userid;
+		    	token_send.auth.salt = uuid.v4();
+		    	token_send.signature = privateKey.sign(token_send.auth).toString('base64');
+		    	req.session.token = token_send;
+		    	res.redirect(redirectUri);
+		    }
+	    );
 	    }
     );
 });
@@ -115,3 +192,12 @@ app.get('/oauth/getToken',function(req,res){
 // 		}
 // 	]
 // });
+//-------------------------------------------------------------------
+app.use(express.static(__dirname + '/public'));
+
+//show login page
+app.get('/', function(req, res) {
+    res.sendfile('./public/login.html'); 
+	var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/';
+	delete req.session.redirectTo;
+});
