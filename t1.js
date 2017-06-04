@@ -20,7 +20,7 @@ var server = app.listen(port, function(){
 app.get('/home',function(req,res){
 	// req.session = {};
     if (!req.session.token) {
-        res.redirect('http://myconnectedhome.info:3004/?redirectUri=http://mch.eastus.cloudapp.azure.com:3005/home');
+        res.redirect('http://myconnectedhome.info:3004/?redirectUri=http://myconnectedhome.info:3005/home');
     } else {
     	res.writeHead(200, {
         	'Content-Type' : 'application/json'
