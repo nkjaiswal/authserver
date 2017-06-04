@@ -20,11 +20,20 @@ var server = app.listen(port, function(){
 app.get('/home',function(req,res){
 	// req.session = {};
     if (!req.session.token) {
-        res.redirect('http://localhost:3004/?redirectUri=http://localhost:3005/home');
+        res.redirect('http://myconnectedhome.info:3004/?redirectUri=http://mch.eastus.cloudapp.azure.com:3005/home');
     } else {
     	res.writeHead(200, {
         	'Content-Type' : 'application/json'
         })
         res.end(JSON.stringify(req.session.token));
     }
+});
+app.get('/logout',function(req,res){
+    req.session.token = null;
+   
+        res.writeHead(200, {
+            'Content-Type' : 'application/text'
+        })
+        res.end("Logged out!");
+    
 });
