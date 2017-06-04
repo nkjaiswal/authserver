@@ -201,3 +201,80 @@ app.get('/', function(req, res) {
 	var redirectTo = req.session.redirectTo ? req.session.redirectTo : '/';
 	delete req.session.redirectTo;
 });
+//--------------------------------------------------------------------------------------------
+//											ADMIN APP
+//--------------------------------------------------------------------------------------------
+app.get('/admin/logout', function(req, res) {
+	req.session.token = null;
+    res.end("Successfully Logged out.");
+});
+
+//---------- NODE AUTH MODULE START
+authenticate = function(req,res){
+	if(!req.session.token){
+		var currentUrl = req.protocol + '://' + req.get('host') + req.originalUrl;
+		res.redirect('/?redirectUri=' + currentUrl);
+	}
+	return true;
+}
+
+validateToken = function(token){
+	var publicKey = new NodeRSA(publicKeyString);
+	var bSign = publicKey.verify(token.auth,new Buffer(token.signature, 'base64'))
+	return bSign;
+}
+
+checkAppRolesAndPermission = function(req,app,role,permission){
+	var bApp = false, bRole = false, bPermission = false;
+	var token = req.session.token.auth;
+	
+	for(var i=0; i<token.app.length; i++){
+		if(token.app[i].name == app){
+			bApp = true;
+			if(role == null){
+				bRole = true;
+			}else{
+				for(var j=0; j<token.app[i].roles.length; j++){
+					if(token.app[i].roles[j] == role){
+						bRole = true;
+						break;
+					}
+				}
+			}
+
+			if(permission == null){
+				bPermission = true;
+			}else{
+				for(var j=0; j<token.app[i].permission.length; j++){
+					if(token.app[i].permission[j] == permission){
+						bPermission = true;
+						break;
+					}
+				}
+			}
+			break;
+		}
+	}
+	
+	return bApp && bRole && bPermission;
+}
+valid = function(req,res,app,role,permission){
+	var v = authenticate(req,res) && 
+		validateToken(req.session.token) && 
+		checkAppRolesAndPermission(req,app,role,permission);
+	if(!v){
+		res.end("Sorry, you don't have permission to access this resource!!!")
+	}
+	return v;
+}
+//---------- NODE AUTH MODULE END
+/**
+  * Services: /AddApp, /AddValidUri, /AddUser, 
+  * Desc: admin app will allow to add/update/delete/view Users, Apps, and ValidUri
+  *
+  */
+app.get('/admin*', function(req, res) {
+	if(!valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	
+	res.sendfile('.' + req.url); 	
+});
