@@ -210,7 +210,12 @@ app.get('/', function(req, res) {
 //--------------------------------------------------------------------------------------------
 app.get('/admin/logout', function(req, res) {
 	req.session.token = null;
-    res.end("Successfully Logged out.");
+	sendHTTPResponse({
+   		httpCode : 200,
+   		contentType : 'text/html',
+   		content : "Successfully Logged out. You can <a href='/admin/'>login</a> again!",
+   		oResponse : res
+   	});
 });
 
 
