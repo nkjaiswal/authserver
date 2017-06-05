@@ -1,7 +1,8 @@
 sap.ui.define([
 	"sap/m/MessageToast",
+	"sap/m/Dialog",
 	"sap/ui/core/mvc/Controller"
-], function(toast,Controller) {
+], function(toast,Dialog,Controller) {
 	"use strict";
 
 	return Controller.extend("idpadminIDPAdmin.controller.Main", {
@@ -25,30 +26,15 @@ sap.ui.define([
 				}
 			});
 		},
-		getData: function(path, successCallback, errorCallback) {
-			if (path === "UserData") {
-				var obj = {};
-				obj.userid = "I322345";
-				obj.userName = "Nishant";
-				obj.emailid = "nishant.soft04@gmail.com";
-				successCallback(obj);
-			}
-			if (path === "AllUsers") {
-				var obj = [];
-				obj.push({
-					userid: "I322345",
-					userName: "Nishant",
-					emailid: "nishant.soft04@gmail.com",
-					phone : "7760533699"
-				});
-				obj.push({
-					userid: "I322321",
-					userName: "Mounika",
-					emailid: "mounika@gmail.com",
-					phone : "9876543210"
-				});
-				successCallback(obj);
-			}
+		ajaxDELETE : function (url,callback){
+			$.ajax({
+				url: url,
+				type: "DELETE",
+				dataType: "json",
+				success: function(response) {
+					callback(response);
+				}
+			});
 		},
 		getPersonnelData: function() {
 			var that = this;
@@ -60,7 +46,7 @@ sap.ui.define([
 		},
 		getAllUserData: function() {
 			var that = this;
-			this.getData("AllUsers", function(data) {
+			this.ajaxGET("/api/admin/AllUsers", function(data) {
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(data);
 				that.getView().setModel(oModel, "AllUsers");
@@ -119,6 +105,34 @@ sap.ui.define([
 		},
 		getRouter : function(){
 			return sap.ui.core.UIComponent.getRouterFor(this);
+		},
+		onPressDeleteUser : function(oEvent){
+			var that = this;
+			var userDetails = oEvent.getSource().getParent().getBindingContext("AllUsers").getObject();
+			var dialog = new Dialog({
+				title: 'Confirm',
+				type: 'Message',
+				content: new sap.m.Text({ text: 'Are you sure you want to delete user ' + userDetails.userName + ' and his/her roles and permissions?' }),
+				beginButton: new sap.m.Button({
+					text: 'Delete',
+					press: function () {
+						that.ajaxDELETE("/api/admin/User/" + userDetails.userid,function(response){
+							toast.show('User Deleted Successfully!');
+							dialog.close();
+						});
+					}
+				}),
+				endButton: new sap.m.Button({
+					text: 'Cancel',
+					press: function () {
+						dialog.close();
+					}
+				}),
+				afterClose: function() {
+					dialog.destroy();
+				}
+			});
+			dialog.open();
 		}
 	});
 });

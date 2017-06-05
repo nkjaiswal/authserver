@@ -32,6 +32,9 @@
 						<Column>
 							<Text text="Phone"/>
 						</Column>
+						<Column>
+							<Text text="Delete"/>
+						</Column>
 					</columns>
 					<items>
 						<ColumnListItem vAlign="Middle" type="Navigation" press="onPressUsersItem">
@@ -40,6 +43,7 @@
 								<Text text="{AllUsers>userName}" wrapping="false"/>
 								<Text text="{AllUsers>emailid}"/>
 								<Text text="{AllUsers>phone}"/>
+								<Button icon="sap-icon://delete" tooltip="Delete User" press="onPressDeleteUser"/>
 							</cells>
 						</ColumnListItem>
 					</items>

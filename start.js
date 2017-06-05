@@ -235,7 +235,7 @@ app.get('/api/admin/UserData', function(req, res) {
 		    userObj.userid = result[0].userid;
 		    userObj.emailid = result[0].emailid;
 		    userObj.phone = result[0].phone;
-		    userObj.userName = result[0].nameame;
+		    userObj.userName = result[0].userName;
 		    sendHTTPResponse({
 			    httpCode : 200,
 			    contentType : 'application/json',
@@ -261,4 +261,59 @@ app.post('/api/admin/NewUser', function(req, res) {
 			oResponse : res
 		});
 	})
+});
+
+app.get('/api/admin/AllUsers', function(req, res) {
+	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	
+	mongoDBHandler.read("authorization",{
+		    
+		},function(err,result){
+			if(err){sendUnAuth(res);return;}
+		    if(result.length<=0){sendUnAuth(res);return;}
+		    var allUsersDetails = [];
+		    for(var i=0;i<result.length;i++){
+		    	var userObj = {};
+			    userObj.userid = result[i].userid;
+			    userObj.emailid = result[i].emailid;
+			    userObj.phone = result[i].phone;
+			    userObj.userName = result[i].userName;
+			    allUsersDetails.push(userObj);
+		    }
+		    
+		    sendHTTPResponse({
+			    httpCode : 200,
+			    contentType : 'application/json',
+			    content : allUsersDetails,
+			    oResponse : res
+			});
+		}
+	);
+});
+
+app.delete('/api/admin/User/:userid', function(req, res) {
+	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	
+	var userid = req.params.userid;
+	mongoDBHandler.delete("authorization",{
+		    userid : userid
+		},function(err,result){
+			if(err){
+				sendHTTPResponse({
+				    httpCode : 400,
+				    contentType : 'application/json',
+				    content : {"error":"Error in Deleting user."},
+				    oResponse : res
+				});
+			}else{
+				console.log(result);
+				sendHTTPResponse({
+				    httpCode : 204,
+				    contentType : 'application/json',
+				    content : {"Success":"Successfully Deleted the User."},
+				    oResponse : res
+				});
+			}
+		}
+	);
 });
