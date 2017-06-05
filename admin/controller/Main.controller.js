@@ -1,12 +1,24 @@
 sap.ui.define([
+	"sap/m/MessageToast",
 	"sap/ui/core/mvc/Controller"
-], function(Controller) {
+], function(toast,Controller) {
 	"use strict";
 
 	return Controller.extend("idpadminIDPAdmin.controller.Main", {
-		ajaxCaller : function (url,callback){
+		ajaxGET : function (url,callback){
 			$.ajax({
 				url: url,
+				dataType: "json",
+				success: function(response) {
+					callback(response);
+				}
+			});
+		},
+		ajaxPOST : function (url,data,callback){
+			$.ajax({
+				url: url,
+				type: "POST",
+				data: data,
 				dataType: "json",
 				success: function(response) {
 					callback(response);
@@ -20,7 +32,6 @@ sap.ui.define([
 				obj.userName = "Nishant";
 				obj.emailid = "nishant.soft04@gmail.com";
 				successCallback(obj);
-				
 			}
 			if (path === "AllUsers") {
 				var obj = [];
@@ -41,7 +52,7 @@ sap.ui.define([
 		},
 		getPersonnelData: function() {
 			var that = this;
-			this.ajaxCaller("/api/admin/UserData", function(data) {
+			this.ajaxGET("/api/admin/UserData", function(data) {
 				var oModel = new sap.ui.model.json.JSONModel();
 				oModel.setData(data);
 				that.getView().setModel(oModel, "UserData");
@@ -92,7 +103,9 @@ sap.ui.define([
 			newUser.userName = sap.ui.getCore().byId("newUserName").getValue();
 			newUser.emailid = sap.ui.getCore().byId("newEmailId").getValue();
 			newUser.phone = sap.ui.getCore().byId("newPhone").getValue();
-			
+			this.ajaxPOST("/api/admin/NewUser", newUser, function(response){
+				toast.show("User Created Successfully!");
+			});
 			oEvent.getSource().getParent().close();
 		},
 		onPressCancel : function(oEvent){
