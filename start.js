@@ -225,7 +225,6 @@ app.get('/admin*', function(req, res) {
 app.get('/api/admin/UserData', function(req, res) {
 	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
 	
-	// res.sendfile('.' + req.url); 	
 	var userid = req.session.token.auth.user;
 	mongoDBHandler.read("authorization",{
 		    userid:userid
@@ -237,7 +236,29 @@ app.get('/api/admin/UserData', function(req, res) {
 		    userObj.emailid = result[0].emailid;
 		    userObj.phone = result[0].phone;
 		    userObj.userName = result[0].nameame;
-		    res.end(JSON.stringify(userObj));
+		    sendHTTPResponse({
+			    httpCode : 200,
+			    contentType : 'application/json',
+			    content : userObj,
+			    oResponse : res
+			});
 		}
 	);
+});
+
+app.post('/api/admin/NewUser', function(req, res) {
+	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	
+	var newUser = req.body;
+	newUser.password = sha1("test"); //change it to random and send mail to email id
+	newUser._createdon = new Date();
+	mongoDBHandler.insert("authorization",newUser,function(err,result){
+		if(err){sendUnAuth(res);return;}
+		sendHTTPResponse({
+			httpCode : 201,
+			contentType : 'application/json',
+			content : {"Success" : "User Created Successfully"},
+			oResponse : res
+		});
+	})
 });
