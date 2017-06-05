@@ -1,0 +1,22 @@
+{
+	auth: {
+		app: [
+		{
+			name: "SMSPromotion",
+			roles: [
+				"admin",
+				"test"
+			],
+			permission: [
+				"C",
+				"R",
+				"U",
+				"D"
+			]
+		}
+		],
+		user: "niszx",
+		salt: "0d5faa37-0298-44e7-9c00-072c15d025b2"
+	},
+signature: "vSojJxVduLFe8ReQZTHXU6tR3/LeZIBNC7ro8Q/7f5cx0Axz4Jj/HS8Agg+o5i68P3seVNOMbidu57NMyIGLow=="
+}

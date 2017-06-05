@@ -1,21 +1,50 @@
 <mvc:View controllerName="idpadminIDPAdmin.controller.Main" xmlns:u="sap.ui.unified" xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m">
-	<u:Shell id="myShell" icon="{/logo}">
-		<u:headItems>
-			<!--<u:ShellHeadItem tooltip="Configuration" icon="sap-icon://menu2" press="handlePressConfiguration"/>-->
-			<u:ShellHeadItem tooltip="Home" icon="sap-icon://home" visible="true" press="handlePressHome"/>
-		</u:headItems>
-		<!--<u:headEndItems>-->
-		<!--	<u:ShellHeadItem icon="sap-icon://log" tooltip="Logoff" press="handleLogoffPress"/>-->
-		<!--</u:headEndItems>-->
-		<u:user>
-			<u:ShellHeadUserItem image="sap-icon://person-placeholder" username="{UserData>/userName}" press="handleUserItemPressed"/>
-		</u:user>
-		<!--<u:search>-->
-		<!--	<SearchField search="handleSearchPressed"/>-->
-		<!--</u:search>-->
-		<!--<u:paneContent>-->
-		<!--	<Text text="Lorem ipsum"/>-->
-		<!--</u:paneContent>-->
-	</u:Shell>
+	<!--<u:Shell id="myShell" icon="{/logo}">-->
+	<!--	<u:headItems>-->
+	<!--		<u:ShellHeadItem tooltip="Home" icon="sap-icon://home" visible="true" press="handlePressHome"/>-->
+	<!--	</u:headItems>-->
+	<!--	<u:user>-->
+	<!--		<u:ShellHeadUserItem image="sap-icon://person-placeholder" username="{UserData>/userName}" press="handleUserItemPressed"/>-->
+	<!--	</u:user>-->
+	<!--</u:Shell>-->
+	<App id="fioriContent">
+		<pages>
+			<Page title="IDP Admin" id="canteenDetailsPage">
+				<Table items="{path: 'AllUsers>/'}">
+					<headerToolbar>
+						<Toolbar>
+							<Title text="Users" level="H2"/>
+							<ToolbarSpacer/>
+							<Button icon="sap-icon://add" press="onAddPressed"/>
+						</Toolbar>
+					</headerToolbar>
+					<columns>
+						<Column>
+							<Text text="User ID"/>
+						</Column>
+						<Column>
+							<Text text="Name"/>
+						</Column>
+						<Column>
+							<Text text="Email ID"/>
+						</Column>
+						<Column>
+							<Text text="Phone"/>
+						</Column>
+					</columns>
+					<items>
+						<ColumnListItem vAlign="Middle" type="Navigation" press="onPressUsersItem">
+							<cells>
+								<Text text="{AllUsers>userid}" wrapping="false"/>
+								<Text text="{AllUsers>userName}" wrapping="false"/>
+								<Text text="{AllUsers>emailid}"/>
+								<Text text="{AllUsers>phone}"/>
+							</cells>
+						</ColumnListItem>
+					</items>
+				</Table>
+			</Page>
+		</pages>
+	</App>
 </mvc:View>

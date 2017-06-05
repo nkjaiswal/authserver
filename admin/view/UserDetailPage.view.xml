@@ -1,0 +1,10 @@
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="idpadminIDPAdmin.controller.UserDetailPage"
+	xmlns:html="http://www.w3.org/1999/xhtml">
+	<App>
+		<pages>
+			<Page title="User Detail Page">
+				<content></content>
+			</Page>
+		</pages>
+	</App>
+</mvc:View>

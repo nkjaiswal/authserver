@@ -42,6 +42,24 @@
 			"viewName": "idpadminIDPAdmin.view.Main",
 			"type": "XML"
 		},
+		"routing": {
+			"config": {
+				"routerClass": "sap.m.routing.Router",
+				"viewType": "XML",
+				"viewPath": "idpadminIDPAdmin.view",
+				"clearTarget": true
+			},
+			"routes": [{
+				"name": "main",
+				"pattern": "",
+				"view": "Main"
+			}, {
+				"name": "details",
+				"pattern": "details/{userid}",
+				"view": "UserDetailPage"
+			}]
+		},
+
 		"dependencies": {
 			"minUI5Version": "1.30.0",
 			"libs": {

@@ -221,3 +221,23 @@ app.get('/admin*', function(req, res) {
 	
 	res.sendfile('.' + req.url); 	
 });
+
+app.get('/api/admin/UserData', function(req, res) {
+	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	
+	// res.sendfile('.' + req.url); 	
+	var userid = req.session.token.auth.user;
+	mongoDBHandler.read("authorization",{
+		    userid:userid
+		},function(err,result){
+			if(err){sendUnAuth(res);return;}
+		    if(result.length<=0){sendUnAuth(res);return;}
+		    var userObj = {};
+		    userObj.userid = result[0].userid;
+		    userObj.emailid = result[0].emailid;
+		    userObj.phone = result[0].phone;
+		    userObj.userName = result[0].nameame;
+		    res.end(JSON.stringify(userObj));
+		}
+	);
+});
