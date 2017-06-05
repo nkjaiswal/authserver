@@ -184,6 +184,9 @@ app.get('/callback',function(req,res){
 
 // db.authorization.insert({
 // 	userid:'niszx',
+// 	userName:'Nishant Kumar',
+// 	emailid : 'nishant.soft04@gmail.com',
+// 	phone : '7760533699',
 // 	pwd:'ebcef4a82ff8da69055221c0251e4739204029ae',
 // 	apps : [
 // 		{
@@ -217,13 +220,13 @@ app.get('/admin/logout', function(req, res) {
   *
   */
 app.get('/admin*', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
 	
 	res.sendfile('.' + req.url); 	
 });
 
 app.get('/api/admin/UserData', function(req, res) {
-	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
 	
 	var userid = req.session.token.auth.user;
 	mongoDBHandler.read("authorization",{
@@ -247,24 +250,42 @@ app.get('/api/admin/UserData', function(req, res) {
 });
 
 app.post('/api/admin/NewUser', function(req, res) {
-	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
 	
 	var newUser = req.body;
-	newUser.password = sha1("test"); //change it to random and send mail to email id
-	newUser._createdon = new Date();
-	mongoDBHandler.insert("authorization",newUser,function(err,result){
-		if(err){sendUnAuth(res);return;}
-		sendHTTPResponse({
-			httpCode : 201,
-			contentType : 'application/json',
-			content : {"Success" : "User Created Successfully"},
-			oResponse : res
-		});
-	})
+	mongoDBHandler.read("authorization",{userid:newUser.userid},function(err,result){
+		if(err){
+			sendHTTPResponse({
+				httpCode : 404,
+				contentType : 'application/json',
+				content : {"error" : "unknow error!"},
+				oResponse : res
+			});
+		}else if(result.length>0){
+			sendHTTPResponse({
+				httpCode : 404,
+				contentType : 'application/json',
+				content : {"error" : "User Already exists!"},
+				oResponse : res
+			});
+		}else{
+			newUser.password = sha1("test"); //TODO:change it to random and send mail to email id
+			newUser._createdon = new Date();
+			mongoDBHandler.insert("authorization",newUser,function(err,result){
+				if(err){sendUnAuth(res);return;}
+				sendHTTPResponse({
+					httpCode : 201,
+					contentType : 'application/json',
+					content : {"Success" : "User Created Successfully"},
+					oResponse : res
+				});
+			});
+		}
+	});
 });
 
 app.get('/api/admin/AllUsers', function(req, res) {
-	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
 	
 	mongoDBHandler.read("authorization",{
 		    
@@ -292,9 +313,11 @@ app.get('/api/admin/AllUsers', function(req, res) {
 });
 
 app.delete('/api/admin/User/:userid', function(req, res) {
-	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "D")){return;};
 	
 	var userid = req.params.userid;
+	if(userid == 'niszx' || userid == 'super'){sendUnAuth(res);return;}
+
 	mongoDBHandler.delete("authorization",{
 		    userid : userid
 		},function(err,result){
@@ -306,7 +329,6 @@ app.delete('/api/admin/User/:userid', function(req, res) {
 				    oResponse : res
 				});
 			}else{
-				console.log(result);
 				sendHTTPResponse({
 				    httpCode : 204,
 				    contentType : 'application/json',

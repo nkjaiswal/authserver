@@ -84,12 +84,14 @@ sap.ui.define([
 			this._addNewUser.open();
 		},
 		onPressSaveNewUser : function(oEvent){
+			var that = this;
 			var newUser = {};
 			newUser.userid = sap.ui.getCore().byId("newUserId").getValue();
 			newUser.userName = sap.ui.getCore().byId("newUserName").getValue();
 			newUser.emailid = sap.ui.getCore().byId("newEmailId").getValue();
 			newUser.phone = sap.ui.getCore().byId("newPhone").getValue();
 			this.ajaxPOST("/api/admin/NewUser", newUser, function(response){
+				that.getAllUserData();
 				toast.show("User Created Successfully!");
 			});
 			oEvent.getSource().getParent().close();
@@ -117,6 +119,7 @@ sap.ui.define([
 					text: 'Delete',
 					press: function () {
 						that.ajaxDELETE("/api/admin/User/" + userDetails.userid,function(response){
+							that.getAllUserData();
 							toast.show('User Deleted Successfully!');
 							dialog.close();
 						});
