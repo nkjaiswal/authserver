@@ -269,7 +269,7 @@ app.post('/api/admin/NewUser', function(req, res) {
 				oResponse : res
 			});
 		}else{
-			newUser.password = sha1("test"); //TODO:change it to random and send mail to email id
+			newUser.pwd = sha1("test"); //TODO:change it to random and send mail to email id
 			newUser._createdon = new Date();
 			mongoDBHandler.insert("authorization",newUser,function(err,result){
 				if(err){sendUnAuth(res);return;}
