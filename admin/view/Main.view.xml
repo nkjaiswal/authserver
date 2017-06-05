@@ -1,13 +1,13 @@
 <mvc:View controllerName="idpadminIDPAdmin.controller.Main" xmlns:u="sap.ui.unified" xmlns:html="http://www.w3.org/1999/xhtml"
 	xmlns:mvc="sap.ui.core.mvc" displayBlock="true" xmlns="sap.m">
-	<!--<u:Shell id="myShell" icon="{/logo}">-->
-	<!--	<u:headItems>-->
-	<!--		<u:ShellHeadItem tooltip="Home" icon="sap-icon://home" visible="true" press="handlePressHome"/>-->
-	<!--	</u:headItems>-->
-	<!--	<u:user>-->
-	<!--		<u:ShellHeadUserItem image="sap-icon://person-placeholder" username="{UserData>/userName}" press="handleUserItemPressed"/>-->
-	<!--	</u:user>-->
-	<!--</u:Shell>-->
+	<u:Shell id="myShell" icon="{/logo}">
+		<u:headItems>
+			<u:ShellHeadItem tooltip="Home" icon="sap-icon://home" visible="true" press="handlePressHome"/>
+		</u:headItems>
+		<u:user>
+			<u:ShellHeadUserItem image="sap-icon://person-placeholder" username="{UserData>/userName}" press="handleUserItemPressed"/>
+		</u:user>
+	</u:Shell>
 	<App id="fioriContent">
 		<pages>
 			<Page title="IDP Admin" id="canteenDetailsPage">
