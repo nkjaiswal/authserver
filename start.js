@@ -1,3 +1,4 @@
+var APP_NAME = "authorization";
 var idpAuth    = require('idpauth')
 var express    = require('express')
 var bodyParser = require('body-parser')
@@ -225,13 +226,13 @@ app.get('/admin/logout', function(req, res) {
   *
   */
 app.get('/admin*', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "R")){return;};
 	
 	res.sendfile('.' + req.url); 	
 });
 
 app.get('/api/admin/UserData', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "R")){return;};
 	
 	var userid = req.session.token.auth.user;
 	mongoDBHandler.read("authorization",{
@@ -255,7 +256,7 @@ app.get('/api/admin/UserData', function(req, res) {
 });
 
 app.post('/api/admin/NewUser', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "C")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "C")){return;};
 	
 	var newUser = req.body;
 	mongoDBHandler.read("authorization",{userid:newUser.userid},function(err,result){
@@ -290,7 +291,7 @@ app.post('/api/admin/NewUser', function(req, res) {
 });
 
 app.get('/api/admin/AllUsers', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "R")){return;};
 	
 	mongoDBHandler.read("authorization",{
 		    
@@ -318,7 +319,7 @@ app.get('/api/admin/AllUsers', function(req, res) {
 });
 
 app.delete('/api/admin/User/:userid', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "D")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "D")){return;};
 	
 	var userid = req.params.userid;
 	if(userid == 'niszx' || userid == 'super'){sendUnAuth(res);return;}
@@ -346,7 +347,7 @@ app.delete('/api/admin/User/:userid', function(req, res) {
 });
 
 app.put('/api/admin/User/:userid', function(req, res) {
-	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "U")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "U")){return;};
 	
 	var userid = req.params.userid;
 
@@ -381,7 +382,7 @@ app.put('/api/admin/User/:userid', function(req, res) {
 });
 
 app.get('/api/admin/User/:userid', function(req, res) {
-	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "R")){return;};
 	
 	var userid = req.params.userid;
 	mongoDBHandler.read("authorization",{
@@ -401,6 +402,30 @@ app.get('/api/admin/User/:userid', function(req, res) {
 			    content : userObj,
 			    oResponse : res
 			});
+		}
+	);
+});
+
+app.put('/api/admin/User/:userid/apps', function(req, res) {
+	if(!idpAuth.valid(req,res, APP_NAME, "admin", "R")){return;};
+	
+	var userid = req.params.userid;
+	mongoDBHandler.read("authorization",{
+		    userid:userid
+		},function(err,result){
+			if(err){sendUnAuth(res);return;}
+		    if(result.length<=0){sendUnAuth(res);return;}
+		    var userObj = result[0];
+		    userObj.apps = req.body;
+		    mongoDBHandler.update("authorization",{userid:userid},userObj,function(err){
+		    	if(err){sendUnAuth(res);return;}
+		    	sendHTTPResponse({
+				    httpCode : 200,
+				    contentType : 'application/json',
+				    content : {"Success" : "User Apps Authorization Successfully Updated!"},
+				    oResponse : res
+				});
+		    });
 		}
 	);
 });

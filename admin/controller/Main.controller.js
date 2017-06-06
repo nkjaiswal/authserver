@@ -20,7 +20,7 @@ sap.ui.define([
 				url: url,
 				type: "POST",
 				data: data,
-				contentType: "application/json",
+				// contentType: "application/json",
 				dataType: "json",
 				success: function(response) {
 					callback(response);
@@ -96,7 +96,7 @@ sap.ui.define([
 			}
 			this._addNewUser.open();
 		},
-		onPressSaveNewUser : function(oEvent){
+		onPressAddNewUser : function(oEvent){
 			var that = this;
 			var newUser = {};
 			newUser.userid = sap.ui.getCore().byId("newUserId").getValue();
