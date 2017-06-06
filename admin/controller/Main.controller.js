@@ -26,6 +26,17 @@ sap.ui.define([
 				}
 			});
 		},
+		ajaxPUT : function (url,data,callback){
+			$.ajax({
+				url: url,
+				type: "PUT",
+				data: data,
+				dataType: "json",
+				success: function(response) {
+					callback(response);
+				}
+			});
+		},
 		ajaxDELETE : function (url,callback){
 			$.ajax({
 				url: url,
@@ -136,6 +147,38 @@ sap.ui.define([
 				}
 			});
 			dialog.open();
+		},
+		onPressEditUser : function(oEvent){
+			var that = this;
+			var userDetails = oEvent.getSource().getParent().getBindingContext("AllUsers").getObject();
+
+			if (!this._updateUser) {
+				this._updateUser = sap.ui.xmlfragment(
+					"idpadminIDPAdmin.fragment.EditUser",
+					this
+				);
+				this.getView().addDependent(this._updateUser);
+			}
+
+			sap.ui.getCore().byId("updateUserId").setValue(userDetails.userid);
+			sap.ui.getCore().byId("updateUserName").setValue(userDetails.userName);
+			sap.ui.getCore().byId("updateEmailId").setValue(userDetails.emailid);
+			sap.ui.getCore().byId("updatePhone").setValue(userDetails.phone);
+
+			this._updateUser.open();
+		},
+		onPressUpdateUser : function(oEvent){
+			var that = this;
+			var updateUser = {};
+			var userid = sap.ui.getCore().byId("updateUserId").getValue();
+			updateUser.userName = sap.ui.getCore().byId("updateUserName").getValue();
+			updateUser.emailid = sap.ui.getCore().byId("updateEmailId").getValue();
+			updateUser.phone = sap.ui.getCore().byId("updatePhone").getValue();
+			this.ajaxPUT("/api/admin/User/" + userid, updateUser, function(response){
+				that.getAllUserData();
+				toast.show("User Updated Successfully!");
+			});
+			oEvent.getSource().getParent().close();
 		}
 	});
 });

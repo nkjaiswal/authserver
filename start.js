@@ -344,3 +344,38 @@ app.delete('/api/admin/User/:userid', function(req, res) {
 		}
 	);
 });
+
+app.put('/api/admin/User/:userid', function(req, res) {
+	//if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "U")){return;};
+	
+	var userid = req.params.userid;
+
+	mongoDBHandler.read("authorization",{
+		    userid : userid
+		},function(err,result){
+			if(err || result.length!=1){
+				sendHTTPResponse({
+				    httpCode : 400,
+				    contentType : 'application/json',
+				    content : {"error":"Error in Reading user information from database."},
+				    oResponse : res
+				});
+			}else{
+				var userObj = result[0];
+				userObj.userName = req.body.userName;
+				userObj.emailid = req.body.emailid;
+				userObj.phone = req.body.phone;
+				userObj.lastUpdate = new Date();
+				mongoDBHandler.update("authorization",{userid:userid},userObj,function(err,result2){
+					if(err){sendUnAuth(res);return;}
+					sendHTTPResponse({
+					    httpCode : 200,
+					    contentType : 'application/json',
+					    content : {"Success":"Successfully Updated the User."},
+					    oResponse : res
+					});
+				});
+			}
+		}
+	);
+});
