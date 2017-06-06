@@ -32,10 +32,10 @@
 						<Column>
 							<Text text="Phone"/>
 						</Column>
-						<Column>
+						<Column width="50px">
 							<Text text="Delete"/>
 						</Column>
-						<Column>
+						<Column width="50px">
 							<Text text="Edit"/>
 						</Column>
 					</columns>
@@ -47,7 +47,7 @@
 								<Text text="{AllUsers>emailid}"/>
 								<Text text="{AllUsers>phone}"/>
 								<Button icon="sap-icon://delete" tooltip="Delete User" press="onPressDeleteUser"/>
-								<Button icon="sap-icon://edit" tooltip="Delete User" press="onPressEditUser"/>
+								<Button icon="sap-icon://edit" tooltip="Edit User" press="onPressEditUser"/>
 							</cells>
 						</ColumnListItem>
 					</items>

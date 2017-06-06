@@ -1,10 +1,88 @@
-<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" controllerName="idpadminIDPAdmin.controller.UserDetailPage"
+<mvc:View xmlns:core="sap.ui.core" xmlns:mvc="sap.ui.core.mvc" xmlns="sap.m" xmlns:l = "sap.ui.layout" controllerName="idpadminIDPAdmin.controller.UserDetailPage"
 	xmlns:html="http://www.w3.org/1999/xhtml">
 	<App>
 		<pages>
-			<Page title="User Detail Page">
-				<content></content>
+			<Page>
+				<ObjectHeader
+					id="oh1"
+					responsive="true"
+					fullScreenOptimized="true"
+					intro="{userInfo>/userid}"
+					title="{userInfo>/userName}"
+					backgroundDesign="Translucent">
+					
+					<statuses>
+						<ObjectStatus
+							title="Email ID"
+							text="{userInfo>/emailid}"
+							state="Success"/>
+						<ObjectStatus
+							title="Phone no"
+							text="{userInfo>/phone}"
+							state="Success"/>
+					</statuses>
+					<headerContainer>
+						<IconTabBar
+							id="itb1" class="sapUiResponsiveContentPadding">
+							<items>
+								<IconTabFilter
+									text="Roles and Permission for Apps"
+									key="key2">
+									<content>
+										<Table items="{path: 'apps>/'}">
+											<headerToolbar>
+											<Toolbar>
+												<Title text="Apps" level="H2"/>
+												<ToolbarSpacer/>
+												<Button icon="sap-icon://add" press="onPressAddApp"/>
+											</Toolbar>
+										</headerToolbar>
+											<columns>
+												<Column>
+													<Text text="App ID"/>
+												</Column>
+												<Column>
+													<Text text="Roles"/>
+												</Column>
+												<Column>
+													<Text text="Premission"/>
+												</Column>
+												<Column width="50px">
+													<Text text="Delete"/>
+												</Column>
+												<Column width="50px">
+													<Text text="Edit"/>
+												</Column>
+											</columns>
+											<items>
+												<ColumnListItem vAlign="Middle">
+													<cells>
+														<Text text="{apps>name}" wrapping="false"/>
+														<Text text="{apps>roles}" wrapping="false"/>
+														<Text text="{apps>permission}"/>
+														<Button icon="sap-icon://delete" tooltip="Delete Authorization" press="onPressDeleteAuth"/>
+														<Button icon="sap-icon://edit" tooltip="Edit Authorization" press="onPressEditAuth"/>
+													</cells>
+												</ColumnListItem>
+											</items>
+										</Table>
+									</content>
+								</IconTabFilter>
+							</items>
+						</IconTabBar>
+					</headerContainer>
+				</ObjectHeader>
+				<footer>
+					<Toolbar>
+						<ToolbarSpacer/>
+						<Button text="Save" type="Accept"/>
+						<Button text="Cancel" type="Reject"/>
+					</Toolbar>
+				</footer>
 			</Page>
 		</pages>
 	</App>
+	
 </mvc:View>
+
+	

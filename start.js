@@ -346,7 +346,7 @@ app.delete('/api/admin/User/:userid', function(req, res) {
 });
 
 app.put('/api/admin/User/:userid', function(req, res) {
-	//if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "U")){return;};
+	if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "U")){return;};
 	
 	var userid = req.params.userid;
 
@@ -376,6 +376,31 @@ app.put('/api/admin/User/:userid', function(req, res) {
 					});
 				});
 			}
+		}
+	);
+});
+
+app.get('/api/admin/User/:userid', function(req, res) {
+	// if(!idpAuth.valid(req,res, "SMSPromotion", "admin", "R")){return;};
+	
+	var userid = req.params.userid;
+	mongoDBHandler.read("authorization",{
+		    userid:userid
+		},function(err,result){
+			if(err){sendUnAuth(res);return;}
+		    if(result.length<=0){sendUnAuth(res);return;}
+		    var userObj = {};
+		    userObj.userid = result[0].userid;
+		    userObj.emailid = result[0].emailid;
+		    userObj.phone = result[0].phone;
+		    userObj.userName = result[0].userName;
+		    userObj.apps = result[0].apps;
+		    sendHTTPResponse({
+			    httpCode : 200,
+			    contentType : 'application/json',
+			    content : userObj,
+			    oResponse : res
+			});
 		}
 	);
 });
