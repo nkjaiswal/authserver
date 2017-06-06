@@ -1,0 +1,21 @@
+<core:FragmentDefinition xmlns="sap.m" xmlns:core="sap.ui.core" xmlns:l="sap.ui.layout" xmlns:f="sap.ui.layout.form">
+	<Dialog title="Add New App and Authorization">
+		<f:SimpleForm id="SimpleFormChange354app" editable="true" layout="ResponsiveGridLayout" labelSpanXL="3" labelSpanL="3"
+			labelSpanM="3" labelSpanS="12" adjustLabelSpan="false" emptySpanXL="4" emptySpanL="4" emptySpanM="4" emptySpanS="0" columnsXL="1"
+			columnsL="1" columnsM="1" singleContainerFullSize="false">
+			<f:content>
+				<Label text="App ID"/>
+				<Input value="" id="newAppId"/>
+				<Label text="Roles (comma seperated)"/>
+				<Input value="" id="newRoles"></Input>
+				<Label text="Permissions (comma seperated)"/>
+				<Input value="" id="newPermissions"/>
+			</f:content>
+		</f:SimpleForm>
+		<buttons>
+			<Button text="Save" press="onPressAddNewApp"></Button>
+			<Button text="Cancel" press="onPressCancel"></Button>
+		</buttons>
+	</Dialog>
+	
+</core:FragmentDefinition>

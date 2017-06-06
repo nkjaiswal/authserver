@@ -15,7 +15,7 @@
 			</f:content>
 		</f:SimpleForm>
 		<buttons>
-			<Button text="Save" press="onPressSaveNewUser"></Button>
+			<Button text="Save" press="onPressAddNewUser"></Button>
 			<Button text="Cancel" press="onPressCancel"></Button>
 		</buttons>
 	</Dialog>

@@ -20,6 +20,7 @@ sap.ui.define([
 				url: url,
 				type: "POST",
 				data: data,
+				contentType: "application/json",
 				dataType: "json",
 				success: function(response) {
 					callback(response);
@@ -30,6 +31,7 @@ sap.ui.define([
 			$.ajax({
 				url: url,
 				type: "PUT",
+				contentType: "application/json",
 				data: data,
 				dataType: "json",
 				success: function(response) {
