@@ -47,19 +47,30 @@
 				"routerClass": "sap.m.routing.Router",
 				"viewType": "XML",
 				"viewPath": "idpadminIDPAdmin.view",
-				"clearTarget": true
+				"controlAggregation": "pages",
+				"targetControl": "fioriContent",
+				"clearTarget": false,
+				"controlId": "fioriContent"
 			},
 			"routes": [{
 				"name": "main",
 				"pattern": "",
-				"view": "Main"
+				"view": "Main",
+				"targetControl": "fioriContent"
+
 			}, {
 				"name": "details",
 				"pattern": "details/{userid}",
-				"view": "UserDetailPage"
-			}]
-		},
+				"target": ["details"],
+				"targetControl": "app"
 
+			}],
+			"targets": {
+				"details": {
+					"viewName": "UserDetailPage"
+				}
+			}
+		},
 		"dependencies": {
 			"minUI5Version": "1.30.0",
 			"libs": {
