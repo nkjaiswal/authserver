@@ -1,4 +1,4 @@
-var APP_NAME = "authorization";
+var APP_NAME = "SMSPromotion";
 var idpAuth    = require('idpauth')
 var express    = require('express')
 var bodyParser = require('body-parser')
